@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query
-from backend.database import get_connection
+from .database import get_connection
 from fastapi.middleware.cors import CORSMiddleware
 import json
 
