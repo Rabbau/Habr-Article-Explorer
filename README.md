@@ -84,13 +84,13 @@ Habr-Article-Explorer/
 1. Создать виртуальное окружение и установить зависимости:
 
 ```bash
-poetry install --only main
+poetry install 
 ```
 
 2. Запустить сервер:
 
 ```bash
-poetry run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+poetry run uvicorn backend.main:app 
 ```
 
 👉 API будет доступен на: `http://localhost:8000`
@@ -111,12 +111,6 @@ cd frontend
 npm install
 ```
 
-3. Прописать `.env`:
-
-```env
-VITE_BACKEND_URL=http://localhost:8000
-```
-
 4. Запустить приложение:
 
 ```bash
@@ -134,8 +128,7 @@ npm run dev
 1. Создайте **Web Service** на Render
 2. Репозиторий: `Rabbau/Habr-Article-Explorer`
 3. Ветка: `prod`
-4. Root Directory: `backend`
-5. Build Command:
+4. Build Command:
 
 ```bash
 pip install poetry && poetry install --only main --no-root
