@@ -1,9 +1,17 @@
 from fastapi import FastAPI, Query
 from backend.database import get_connection
+from fastapi.middleware.cors import CORSMiddleware
 import json
+
 
 app = FastAPI(title="Habr Article Explorer API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/articles")
 def get_articles(
