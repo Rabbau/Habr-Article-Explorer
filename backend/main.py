@@ -13,7 +13,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("api/articles")
+@app.get("/api/articles")
 def get_articles(
     search: str = Query(None, description="Поиск по заголовку"),
     tag: str = Query(None, description="Фильтр по тегу"),
@@ -67,7 +67,7 @@ def get_articles(
     return {"articles": articles, "page": page, "limit": limit}
 
 
-@app.get("api/articles/{article_id}")
+@app.get("/api/articles/{article_id}")
 def get_article(article_id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -84,7 +84,7 @@ def get_article(article_id: int):
     return article
 
 
-@app.get("api/stats")
+@app.get("/api/stats")
 def get_stats():
     conn = get_connection()
     cursor = conn.cursor()
