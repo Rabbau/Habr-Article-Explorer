@@ -12,6 +12,9 @@ function App() {
   const [totalArticles, setTotalArticles] = useState(0)
   const [loading, setLoading] = useState(false)
 
+  // Используем переменную окружения для бэка
+  const API_URL = import.meta.env.VITE_BACKEND_URL
+
   // Загружаем статьи
   useEffect(() => {
     const fetchArticles = async () => {
@@ -20,7 +23,7 @@ function App() {
         const params = { sort, page, limit: 20 }
         if (search) params.search = search
         if (activeTag) params.tag = activeTag
-        const res = await axios.get('/api/articles', { params })
+        const res = await axios.get(`${API_URL}/api/articles`, { params })
         setArticles(res.data.articles)
       } catch (e) {
         console.error(e)
@@ -29,23 +32,24 @@ function App() {
       }
     }
     fetchArticles()
-  }, [sort, page, activeTag])
+  }, [sort, page, activeTag, search, API_URL])
 
   // Загружаем статистику для тегов в сайдбаре
   useEffect(() => {
-    axios.get('/api/stats').then(res => {
+    axios.get(`${API_URL}/api/stats`).then(res => {
       setTopTags(res.data.top_tags)
       setTotalArticles(res.data.total_articles)
-    })
-  }, [])
+    }).catch(e => console.error(e))
+  }, [API_URL])
 
   // Поиск по Enter
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
       setPage(1)
       setActiveTag('')
-      axios.get('/api/articles', { params: { search, sort, page: 1, limit: 20 } })
+      axios.get(`${API_URL}/api/articles`, { params: { search, sort, page: 1, limit: 20 } })
         .then(res => setArticles(res.data.articles))
+        .catch(e => console.error(e))
     }
   }
 
@@ -159,7 +163,7 @@ function App() {
             </button>
             <button className="active">{page}</button>
             <button onClick={() => setPage(p => p + 1)} disabled={articles.length < 20}>
-              Вперёд →
+              Вперёд → 
             </button>
           </div>
         </div>
