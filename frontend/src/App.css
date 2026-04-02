@@ -390,3 +390,78 @@ body.dark-body {
   .stat-card__number { font-size: 48px; }
   .pagination button { padding: 6px 12px; }
 }
+
+/* АВТОРИЗАЦИЯ */
+.btn-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-login:hover { border-color: #ef7f1a; color: #ef7f1a; }
+
+.user-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  padding: 6px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #999;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover { border-color: #ff4444; color: #ff4444; }
+
+/* КНОПКА ИЗБРАННОГО */
+.article-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.article-card__header h2 { margin-bottom: 0; flex: 1; }
+
+.fav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0 4px;
+  line-height: 1;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.fav-btn:hover { transform: scale(1.2); }
+.fav-btn--active { filter: drop-shadow(0 0 4px rgba(239,127,26,0.5)); }
+
+/* ТЁМНАЯ ТЕМА — дополнения */
+.dark .btn-login { background: #252d3d; border-color: #3a4358; color: #aaa; }
+.dark .btn-login:hover { border-color: #ef7f1a; color: #ef7f1a; }
+.dark .btn-logout { background: #252d3d; border-color: #3a4358; color: #aaa; }
+.dark .user-name { color: #aaa; }

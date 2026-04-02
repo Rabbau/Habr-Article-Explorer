@@ -1,16 +1,30 @@
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 import httpx
+from jose import jwt
+from datetime import datetime, timedelta
 
-from backend.core import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+from backend.core import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SECRET_KEY
 from .service import get_or_create_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-
 CLIENT_ID = GOOGLE_CLIENT_ID
 CLIENT_SECRET = GOOGLE_CLIENT_SECRET
+SECRET_KEY = SECRET_KEY 
 REDIRECT_URI = "https://habr-article-explorer.onrender.com/auth/callback"
+FRONTEND_URL = "https://habr-article-explorer-1.onrender.com/"  
+ALGORITHM = "HS256"
+
+
+def create_jwt(user: dict) -> str:
+    payload = {
+        "sub": str(user["id"]),
+        "email": user["email"],
+        "name": user.get("name"),
+        "exp": datetime.utcnow() + timedelta(days=7),
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
 @router.get("/google")
@@ -27,32 +41,29 @@ def google_login():
 
 @router.get("/callback")
 def google_callback(code: str):
-    token_url = "https://oauth2.googleapis.com/token"
+    token_response = httpx.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "code": code,
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "redirect_uri": REDIRECT_URI,
+            "grant_type": "authorization_code",
+        }
+    )
+    access_token = token_response.json().get("access_token")
 
-    token_data = {
-        "code": code,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "redirect_uri": REDIRECT_URI,
-        "grant_type": "authorization_code",
-    }
-
-    token_response = httpx.post(token_url, data=token_data)
-    token_json = token_response.json()
-
-    access_token = token_json.get("access_token")
-
-    userinfo_response = httpx.get(
+    user_info = httpx.get(
         "https://www.googleapis.com/oauth2/v2/userinfo",
         headers={"Authorization": f"Bearer {access_token}"}
+    ).json()
+
+    user = get_or_create_user(
+        email=user_info["email"],
+        name=user_info.get("name"),
+        google_id=user_info["id"]
     )
 
-    user_info = userinfo_response.json()
+    token = create_jwt(dict(user))
 
-    email = user_info["email"]
-    name = user_info.get("name")
-    google_id = user_info["id"]
-
-    user = get_or_create_user(email, name, google_id)
-
-    return {"user": user}
+    return RedirectResponse(f"{FRONTEND_URL}?token={token}")
