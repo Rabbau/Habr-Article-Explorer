@@ -18,7 +18,7 @@ function App() {
 
   const API_URL = import.meta.env.VITE_BACKEND_URL
 
-  // Применяем тёмную тему на body — это убирает боковые полосы
+
   useEffect(() => {
     document.body.classList.toggle('dark-body', darkMode)
   }, [darkMode])
