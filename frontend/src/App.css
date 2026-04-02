@@ -8,6 +8,12 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #f5f5f5;
   color: #333;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-body {
+  background: #1a1a1a;
+  color: #e0e0e0;
 }
 
 .app {
@@ -16,7 +22,7 @@ body {
 }
 
 .dark {
-  background: #1a1a2e;
+  background: #1a1a1a;
   color: #e0e0e0;
 }
 
@@ -32,6 +38,7 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  transition: background 0.3s;
 }
 
 .header h1 { font-size: 22px; color: #1a1a1a; }
@@ -74,7 +81,7 @@ body {
   border-radius: 8px;
   font-size: 16px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.3s;
   background: #fff;
   color: #333;
 }
@@ -97,6 +104,7 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   position: sticky;
   top: 20px;
+  transition: background 0.3s;
 }
 
 .sidebar h3 {
@@ -111,21 +119,43 @@ body {
 .mini-stats {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 24px;
-  padding: 16px;
-  background: linear-gradient(135deg, #ef7f1a, #f59e3f);
+  padding: 14px;
+  background: #f9f9f9;
   border-radius: 10px;
+  border: 1px solid #eee;
 }
 
 .mini-stat {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
-.mini-stat__value { font-weight: 700; color: #fff; font-size: 15px; }
-.mini-stat__label { font-size: 11px; color: rgba(255,255,255,0.85); }
+.mini-stat__label { font-size: 12px; color: #999; }
+
+.mini-stat__value {
+  font-weight: 700;
+  color: #ef7f1a;
+  font-size: 14px;
+  text-align: right;
+}
+
+.mini-stat__value--tag {
+  font-size: 12px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mini-stat-divider {
+  height: 1px;
+  background: #eee;
+  margin: 2px 0;
+}
 
 /* СОРТИРОВКА */
 .sort-buttons { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
@@ -168,7 +198,7 @@ body {
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
 }
 
 .article-card:hover {
@@ -232,7 +262,6 @@ body {
 
 /* СТРАНИЦА СТАТИСТИКИ */
 .stats-page { margin-top: 4px; }
-
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 .stat-card {
@@ -240,6 +269,7 @@ body {
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.3s;
 }
 
 .stat-card--wide { grid-column: 1 / -1; }
@@ -300,41 +330,44 @@ body {
 .author-count { font-size: 13px; color: #ef7f1a; font-weight: 600; }
 
 /* ТЁМНАЯ ТЕМА */
-.dark .header { background: #16213e; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.dark .header { background: #242424; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 .dark .header h1 { color: #e0e0e0; }
-.dark .tab { background: #16213e; border-color: #2a2a4a; color: #aaa; }
+.dark .tab { background: #242424; border-color: #333; color: #aaa; }
 .dark .tab.active { border-color: #ef7f1a; color: #ef7f1a; }
-.dark .search-bar input { background: #16213e; border-color: #2a2a4a; color: #e0e0e0; }
-.dark .search-bar input::placeholder { color: #666; }
+.dark .search-bar input { background: #242424; border-color: #333; color: #e0e0e0; }
+.dark .search-bar input::placeholder { color: #555; }
 .dark .search-bar input:focus { border-color: #ef7f1a; }
-.dark .sidebar { background: #16213e; }
-.dark .sidebar h3 { color: #666; }
-.dark .sort-buttons button { background: #16213e; border-color: #2a2a4a; color: #aaa; }
+.dark .sidebar { background: #242424; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.dark .sidebar h3 { color: #555; }
+.dark .mini-stats { background: #2a2a2a; border-color: #333; }
+.dark .mini-stat__label { color: #555; }
+.dark .mini-stat-divider { background: #333; }
+.dark .sort-buttons button { background: #242424; border-color: #333; color: #aaa; }
 .dark .sort-buttons button.active { border-color: #ef7f1a; color: #ef7f1a; }
-.dark .tag { background: #2a2a4a; color: #aaa; }
-.dark .tag:hover { background: #3a2a1a; }
-.dark .tag.active { background: #ef7f1a; color: #fff; }
-.dark .article-card { background: #16213e; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.dark .tag { background: #2a2a2a; color: #aaa; border-color: #333; }
+.dark .tag:hover { background: #333; color: #ef7f1a; }
+.dark .tag.active { background: #ef7f1a; color: #fff; border-color: #ef7f1a; }
+.dark .article-card { background: #242424; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 .dark .article-card h2 a { color: #e0e0e0; }
 .dark .article-card h2 a:hover { color: #ef7f1a; }
-.dark .article-preview { color: #aaa; }
-.dark .article-tag { background: #2a2a4a; color: #aaa; }
-.dark .article-tag:hover { background: #3a2a1a; }
-.dark .pagination button { background: #16213e; border-color: #2a2a4a; color: #aaa; }
+.dark .article-preview { color: #888; }
+.dark .article-tag { background: #2a2a2a; color: #888; }
+.dark .article-tag:hover { background: #333; color: #ef7f1a; }
+.dark .pagination button { background: #242424; border-color: #333; color: #aaa; }
 .dark .pagination button:hover,
 .dark .pagination button.active { border-color: #ef7f1a; color: #ef7f1a; }
-.dark .stat-card { background: #16213e; }
+.dark .stat-card { background: #242424; }
 .dark .stat-card__title { color: #e0e0e0; }
-.dark .tag-progress-bar { background: #2a2a4a; }
+.dark .tag-progress-bar { background: #2a2a2a; }
 .dark .tag-progress-name { color: #e0e0e0; }
-.dark .author-item { background: #0f3460; }
+.dark .tag-progress-count { color: #555; }
+.dark .author-item { background: #2a2a2a; }
 .dark .author-name { color: #e0e0e0; }
 .dark .stats-bar { color: #aaa; }
 
 /* АДАПТИВНОСТЬ */
 @media (max-width: 900px) {
   .app { padding: 16px; }
-
   .main-layout { grid-template-columns: 1fr; }
   .sidebar { position: static; }
   .sort-buttons { flex-direction: row; flex-wrap: wrap; }
@@ -344,11 +377,9 @@ body {
 
 @media (max-width: 600px) {
   .app { padding: 12px; }
-
   .header { flex-direction: column; align-items: flex-start; gap: 12px; }
   .header h1 { font-size: 18px; }
   .header-right { width: 100%; justify-content: space-between; }
-
   .tab { padding: 6px 12px; font-size: 13px; }
   .article-card { padding: 14px; }
   .article-card h2 { font-size: 15px; }

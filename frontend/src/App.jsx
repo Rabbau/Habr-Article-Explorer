@@ -18,6 +18,11 @@ function App() {
 
   const API_URL = import.meta.env.VITE_BACKEND_URL
 
+  // Применяем тёмную тему на body — это убирает боковые полосы
+  useEffect(() => {
+    document.body.classList.toggle('dark-body', darkMode)
+  }, [darkMode])
+
   useEffect(() => {
     const fetchArticles = async () => {
       setLoading(true)
@@ -60,7 +65,6 @@ function App() {
 
   return (
     <div className={`app ${darkMode ? 'dark' : ''}`}>
-      {/* Хедер */}
       <div className="header">
         <h1>Habr <span>Article Explorer</span></h1>
         <div className="header-right">
@@ -91,10 +95,8 @@ function App() {
         </div>
       </div>
 
-      {/* Вкладка статистики */}
       {activeTab === 'stats' && <StatsPage stats={stats} />}
 
-      {/* Вкладка статей */}
       {activeTab === 'articles' && (
         <>
           <div className="search-bar">
@@ -110,19 +112,22 @@ function App() {
           <div className="main-layout">
             <div className="sidebar">
 
-              {/* Мини-статистика */}
+              {/* Мини-статистика — сдержанный стиль */}
               <div className="mini-stats">
                 <div className="mini-stat">
+                  <span className="mini-stat__label">Статей в базе</span>
                   <span className="mini-stat__value">{totalArticles}</span>
-                  <span className="mini-stat__label">статей в базе</span>
+                </div>
+                <div className="mini-stat-divider" />
+                <div className="mini-stat">
+                  <span className="mini-stat__label">Топ тег</span>
+                  <span className="mini-stat__value mini-stat__value--tag">
+                    {topTags[0]?.tag || '—'}
+                  </span>
                 </div>
                 <div className="mini-stat">
-                  <span className="mini-stat__value">{topTags[0]?.tag || '—'}</span>
-                  <span className="mini-stat__label">топ тег</span>
-                </div>
-                <div className="mini-stat">
+                  <span className="mini-stat__label">Статей в нём</span>
                   <span className="mini-stat__value">{topTags[0]?.count || 0}</span>
-                  <span className="mini-stat__label">статей в топ теге</span>
                 </div>
               </div>
 
