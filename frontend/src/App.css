@@ -239,3 +239,152 @@ body {
   font-weight: 600;
   color: #ef7f1a;
 }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 8px 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  border-color: #ef7f1a;
+  color: #ef7f1a;
+  font-weight: 600;
+}
+
+.stats-page {
+  margin-top: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.stat-card--wide {
+  grid-column: 1 / -1;
+}
+
+.stat-card--highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ef7f1a, #f59e3f);
+  color: #fff;
+}
+
+.stat-card__number {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card__label {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-top: 8px;
+}
+
+.stat-card__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.tag-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tag-progress-item {}
+
+.tag-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.tag-progress-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.tag-progress-count {
+  color: #999;
+}
+
+.tag-progress-bar {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tag-progress-fill {
+  height: 100%;
+  background: #ef7f1a;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.authors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.author-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.author-rank {
+  font-size: 12px;
+  color: #999;
+  width: 28px;
+}
+
+.author-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.author-count {
+  font-size: 13px;
+  color: #ef7f1a;
+  font-weight: 600;
+}

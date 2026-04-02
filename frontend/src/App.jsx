@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import StatsPage from './components/StatsPage'
 import './App.css'
 
 function App() {
@@ -11,11 +12,11 @@ function App() {
   const [topTags, setTopTags] = useState([])
   const [totalArticles, setTotalArticles] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState('articles') // 'articles' | 'stats'
+  const [stats, setStats] = useState(null)
 
-  // Используем переменную окружения для бэка
   const API_URL = import.meta.env.VITE_BACKEND_URL
 
-  // Загружаем статьи
   useEffect(() => {
     const fetchArticles = async () => {
       setLoading(true)
@@ -34,22 +35,18 @@ function App() {
     fetchArticles()
   }, [sort, page, activeTag, search, API_URL])
 
-  // Загружаем статистику для тегов в сайдбаре
   useEffect(() => {
     axios.get(`${API_URL}/api/stats`).then(res => {
       setTopTags(res.data.top_tags)
       setTotalArticles(res.data.total_articles)
+      setStats(res.data)
     }).catch(e => console.error(e))
   }, [API_URL])
 
-  // Поиск по Enter
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
       setPage(1)
       setActiveTag('')
-      axios.get(`${API_URL}/api/articles`, { params: { search, sort, page: 1, limit: 20 } })
-        .then(res => setArticles(res.data.articles))
-        .catch(e => console.error(e))
     }
   }
 
@@ -57,6 +54,7 @@ function App() {
     setActiveTag(activeTag === tag ? '' : tag)
     setPage(1)
     setSearch('')
+    setActiveTab('articles')
   }
 
   return (
@@ -64,110 +62,130 @@ function App() {
       {/* Хедер */}
       <div className="header">
         <h1>Habr <span>Article Explorer</span></h1>
-        <div className="stats-bar">
-          Статей в базе: <span>{totalArticles}</span>
+        <div className="header-right">
+          <div className="tabs">
+            <button
+              className={`tab ${activeTab === 'articles' ? 'active' : ''}`}
+              onClick={() => setActiveTab('articles')}
+            >
+              📰 Статьи
+            </button>
+            <button
+              className={`tab ${activeTab === 'stats' ? 'active' : ''}`}
+              onClick={() => setActiveTab('stats')}
+            >
+              📊 Статистика
+            </button>
+          </div>
+          <div className="stats-bar">
+            Статей в базе: <span>{totalArticles}</span>
+          </div>
         </div>
       </div>
 
-      {/* Поиск */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Поиск по заголовку... (Enter для поиска)"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          onKeyDown={handleSearch}
-        />
-      </div>
+      {/* Вкладка статистики */}
+      {activeTab === 'stats' && <StatsPage stats={stats} />}
 
-      <div className="main-layout">
-        {/* Сайдбар */}
-        <div className="sidebar">
-          <h3>Сортировка</h3>
-          <div className="sort-buttons">
-            {[
-              { value: 'date', label: '📅 По дате' },
-              { value: 'rating', label: '⭐ По рейтингу' },
-              { value: 'views', label: '👁 По просмотрам' },
-              { value: 'comments', label: '💬 По комментариям' },
-            ].map(s => (
-              <button
-                key={s.value}
-                className={sort === s.value ? 'active' : ''}
-                onClick={() => { setSort(s.value); setPage(1) }}
-              >
-                {s.label}
-              </button>
-            ))}
+      {/* Вкладка статей */}
+      {activeTab === 'articles' && (
+        <>
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Поиск по заголовку... (Enter для поиска)"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+            />
           </div>
 
-          <h3>Топ тегов</h3>
-          <div className="tag-list">
-            {topTags.map(({ tag, count }) => (
-              <span
-                key={tag}
-                className={`tag ${activeTag === tag ? 'active' : ''}`}
-                onClick={() => handleTagClick(tag)}
-                title={`${count} статей`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
+          <div className="main-layout">
+            <div className="sidebar">
+              <h3>Сортировка</h3>
+              <div className="sort-buttons">
+                {[
+                  { value: 'date', label: '📅 По дате' },
+                  { value: 'rating', label: '⭐ По рейтингу' },
+                  { value: 'views', label: '👁 По просмотрам' },
+                  { value: 'comments', label: '💬 По комментариям' },
+                ].map(s => (
+                  <button
+                    key={s.value}
+                    className={sort === s.value ? 'active' : ''}
+                    onClick={() => { setSort(s.value); setPage(1) }}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
 
-        {/* Список статей */}
-        <div>
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-              Загрузка...
+              <h3>Топ тегов</h3>
+              <div className="tag-list">
+                {topTags.map(({ tag, count }) => (
+                  <span
+                    key={tag}
+                    className={`tag ${activeTag === tag ? 'active' : ''}`}
+                    onClick={() => handleTagClick(tag)}
+                    title={`${count} статей`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-          ) : (
-            <div className="articles-list">
-              {articles.map(article => (
-                <div key={article.id} className="article-card">
-                  <h2>
-                    <a href={article.link} target="_blank" rel="noreferrer">
-                      {article.title || 'Без заголовка'}
-                    </a>
-                  </h2>
-                  <div className="article-meta">
-                    <span>👤 {article.author || 'Аноним'}</span>
-                    <span>📅 {article.date ? new Date(article.date).toLocaleDateString('ru-RU') : '—'}</span>
-                    {article.rating !== 0 && <span>⭐ {article.rating}</span>}
-                  </div>
-                  {article.preview_text && (
-                    <p className="article-preview">{article.preview_text}</p>
-                  )}
-                  <div className="article-tags">
-                    {article.tags.map(tag => (
-                      <span
-                        key={tag}
-                        className="article-tag"
-                        onClick={() => handleTagClick(tag)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+
+            <div>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                  Загрузка...
                 </div>
-              ))}
-            </div>
-          )}
+              ) : (
+                <div className="articles-list">
+                  {articles.map(article => (
+                    <div key={article.id} className="article-card">
+                      <h2>
+                        <a href={article.link} target="_blank" rel="noreferrer">
+                          {article.title || 'Без заголовка'}
+                        </a>
+                      </h2>
+                      <div className="article-meta">
+                        <span>👤 {article.author || 'Аноним'}</span>
+                        <span>📅 {article.date ? new Date(article.date).toLocaleDateString('ru-RU') : '—'}</span>
+                        {article.rating !== 0 && <span>⭐ {article.rating}</span>}
+                      </div>
+                      {article.preview_text && (
+                        <p className="article-preview">{article.preview_text}</p>
+                      )}
+                      <div className="article-tags">
+                        {article.tags.map(tag => (
+                          <span
+                            key={tag}
+                            className="article-tag"
+                            onClick={() => handleTagClick(tag)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-          {/* Пагинация */}
-          <div className="pagination">
-            <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>
-              ← Назад
-            </button>
-            <button className="active">{page}</button>
-            <button onClick={() => setPage(p => p + 1)} disabled={articles.length < 20}>
-              Вперёд → 
-            </button>
+              <div className="pagination">
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+                  ← Назад
+                </button>
+                <button className="active">{page}</button>
+                <button onClick={() => setPage(p => p + 1)} disabled={articles.length < 20}>
+                  Вперёд →
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }
