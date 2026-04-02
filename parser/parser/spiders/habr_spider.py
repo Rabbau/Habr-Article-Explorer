@@ -8,17 +8,25 @@ class HabrSpider(scrapy.Spider):
     start_urls = ["https://habr.com/ru/articles/"]
 
     custom_settings = {
-        "DOWNLOAD_DELAY": 0.5,          # было 1.5
         "RANDOMIZE_DOWNLOAD_DELAY": False,
-        "CONCURRENT_REQUESTS": 8,        # параллельных запросов (по умолчанию 16, но к одному домену мало)
-        "CONCURRENT_REQUESTS_PER_DOMAIN": 4,  # было 1 по умолчанию
+        "CONCURRENT_REQUESTS": 8,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
+        "DOWNLOAD_DELAY": 0.5,
+        "RETRY_ENABLED": True,
+        "RETRY_TIMES": 2,
+        "DOWNLOAD_TIMEOUT": 60,
+        "AUTOTHROTTLE_ENABLED": True,
+        "AUTOTHROTTLE_START_DELAY": 0.5,
+        "AUTOTHROTTLE_MAX_DELAY": 5,
+        "AUTOTHROTTLE_TARGET_CONCURRENCY": 8.0,      
+        "LOG_LEVEL": "DEBUG",            
         "DEFAULT_REQUEST_HEADERS": {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                         "AppleWebKit/537.36 (KHTML, like Gecko) "
                         "Chrome/122.0.0.0 Safari/537.36",
             "Accept-Language": "ru-RU,ru;q=0.9",
         },
-    }
+    }      
     def parse(self, response):
         articles = response.css("article.tm-articles-list__item:not(.tm-voice-article)")
         self.logger.info(f"[parse] Найдено article-блоков: {len(articles)} на {response.url}")
