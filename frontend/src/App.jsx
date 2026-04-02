@@ -4,6 +4,7 @@ import StatsPage from './components/StatsPage'
 import './App.css'
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false)
   const [articles, setArticles] = useState([])
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('date')
@@ -12,7 +13,7 @@ function App() {
   const [topTags, setTopTags] = useState([])
   const [totalArticles, setTotalArticles] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('articles') // 'articles' | 'stats'
+  const [activeTab, setActiveTab] = useState('articles')
   const [stats, setStats] = useState(null)
 
   const API_URL = import.meta.env.VITE_BACKEND_URL
@@ -58,7 +59,7 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? 'dark' : ''}`}>
       {/* Хедер */}
       <div className="header">
         <h1>Habr <span>Article Explorer</span></h1>
@@ -75,6 +76,13 @@ function App() {
               onClick={() => setActiveTab('stats')}
             >
               📊 Статистика
+            </button>
+            <button
+              className="tab tab--theme"
+              onClick={() => setDarkMode(!darkMode)}
+              title="Сменить тему"
+            >
+              {darkMode ? '☀️' : '🌙'}
             </button>
           </div>
           <div className="stats-bar">
@@ -101,6 +109,23 @@ function App() {
 
           <div className="main-layout">
             <div className="sidebar">
+
+              {/* Мини-статистика */}
+              <div className="mini-stats">
+                <div className="mini-stat">
+                  <span className="mini-stat__value">{totalArticles}</span>
+                  <span className="mini-stat__label">статей в базе</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-stat__value">{topTags[0]?.tag || '—'}</span>
+                  <span className="mini-stat__label">топ тег</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-stat__value">{topTags[0]?.count || 0}</span>
+                  <span className="mini-stat__label">статей в топ теге</span>
+                </div>
+              </div>
+
               <h3>Сортировка</h3>
               <div className="sort-buttons">
                 {[
