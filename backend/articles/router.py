@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from fastapi import HTTPException
 
-from backend.articles import fetch_articles, get_article_by_id, get_stats_data
+from backend.articles.service import fetch_articles, get_article_by_id, get_stats_data
 from backend.database import get_connection
 
 router = APIRouter(
