@@ -96,6 +96,10 @@ body.dark-body {
   align-items: start;
 }
 
+.articles-column {
+  min-width: 0;
+}
+
 /* САЙДБАР */
 .sidebar {
   background: #fff;

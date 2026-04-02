@@ -110,9 +110,10 @@ function App() {
           </div>
 
           <div className="main-layout">
-            <div className="sidebar">
 
-              {/* Мини-статистика — сдержанный стиль */}
+            {/* Левый сайдбар */}
+            <div className="sidebar">
+              <h3>Обзор</h3>
               <div className="mini-stats">
                 <div className="mini-stat">
                   <span className="mini-stat__label">Статей в базе</span>
@@ -164,7 +165,8 @@ function App() {
               </div>
             </div>
 
-            <div>
+            {/* Статьи — занимают всю оставшуюся ширину */}
+            <div className="articles-column">
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
                   Загрузка...
