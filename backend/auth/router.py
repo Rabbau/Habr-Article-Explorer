@@ -4,7 +4,7 @@ import httpx
 from jose import jwt
 from datetime import datetime, timedelta
 
-from backend.core import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SECRET_KEY
+from backend.core.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SECRET_KEY
 from .service import get_or_create_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
