@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header, HTTPException
 from jose import jwt, JWTError
 from backend.core.config import SECRET_KEY
-from favorites.service import get_favorites, add_favorite, remove_favorite
+from backend.favorites.service import get_favorites, add_favorite, remove_favorite
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
 
