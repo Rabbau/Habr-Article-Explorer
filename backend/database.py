@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
 
-# БД находится в ../parser/habr_articles.db
 DB_PATH = Path(__file__).parent.parent / "parser" / "habr_articles.db"
 
 def get_connection():
