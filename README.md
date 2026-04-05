@@ -1,248 +1,175 @@
+# Habr Article Explorer
 
-# 📖 Habr Article Explorer
+Веб-приложение для просмотра, поиска и анализа статей с Habr на основе локально собранной базы SQLite.
 
-[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.135.2-green)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18.2.0-blueviolet)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-4.4.9-yellowgreen)](https://vitejs.dev/)
-[![SQLite](https://img.shields.io/badge/SQLite-3.41.2-lightgrey)](https://www.sqlite.org/index.html)
-[![Deploy: Render](https://img.shields.io/badge/Deploy-Render-orange)](https://render.com/)
+## Стек
 
-**Habr Article Explorer** — это веб‑приложение для просмотра, поиска и сортировки статей из базы данных Habr.
-Бэкенд написан на **FastAPI**, фронтенд на **React + Vite**, база — SQLite.
+- Python 3.12
+- FastAPI
+- SQLite
+- Scrapy
+- React 19 + Vite
+- Recharts
+- JWT (`python-jose`) + Google OAuth (`httpx`)
+- Poetry
 
-🔗 Прямой деплой:
-Frontend → Static Site
-Backend → FastAPI Web Service (Render)
+## Архитектура
 
----
+Проект состоит из 3 частей:
 
-## 📌 Содержание
+- `parser/` — Scrapy-парсер, собирает статьи с Habr и сохраняет в SQLite.
+- `backend/` — FastAPI API для статей, статистики, авторизации и избранного.
+- `frontend/` — React-клиент (Vite), UI для поиска, фильтров, статистики и избранного.
 
-1. 🚀 Возможности
-2. 📁 Структура
-3. 🧠 Тех. стек
-4. 🧰 Как запустить локально
-5. 📦 Деплой на Render
-6. 📡 API
-7. 💡 Примеры запросов
-8. 📦 Переменные окружения
-9. 📄 Лицензия
+Схема потока данных:
 
----
-
-## 🚀 Возможности
-
-✔️ Просмотр списка статей
-✔️ Поиск по заголовку
-✔️ Сортировка (дата, рейтинг, просмотры, комментарии)
-✔️ Фильтрация по тегам
-✔️ Просмотр подробностей статьи
-✔️ Статистика:
-‑ Общее количество статей
-‑ Топ тегов
-‑ Топ авторов
-
----
-
-## 📁 Структура проекта
-
-```
-Habr-Article-Explorer/
-├─ backend/               # FastAPI API
-│   ├─ __init__.py
-│   ├─ main.py
-│   └─ database.py
-├─ parser/
-│   └─ habr_articles.db   # SQLite база данных
-├─ frontend/              # React + Vite фронтенд
-│   ├─ src/
-│   │   ├─ App.jsx
-│   │   └─ main.jsx
-│   └─ package.json
-└─ README.md
+```text
+Habr -> Scrapy parser -> parser/habr_articles.db -> FastAPI API -> React UI
 ```
 
----
+## Структура проекта
 
-## 🧠 Технологии
+```text
+Habr Article Explorer/
+├── backend/
+│   ├── main.py                 # FastAPI app + роутеры
+│   ├── database.py             # Подключение к SQLite
+│   ├── core/config.py          # Переменные окружения (OAuth/JWT)
+│   ├── articles/               # Статьи + статистика
+│   ├── auth/                   # Google OAuth + JWT
+│   └── favorites/              # Избранное пользователя
+├── parser/
+│   ├── scrapy.cfg
+│   ├── habr_articles.db        # База статей
+│   └── parser/
+│       ├── spiders/habr_spider.py
+│       └── pipelines.py        # Запись в SQLite
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   └── components/StatsPage.jsx
+│   ├── package.json
+│   └── vite.config.js
+├── pyproject.toml
+└── README.md
+```
 
-| Слой       | Технология              |
-| ---------- | ----------------------- |
-| Backend    | Python, FastAPI, SQLite |
-| Frontend   | React, Vite, Axios      |
-| Deployment | Render                  |
-| Data       | habr_articles.db        |
+## Функциональность
 
----
+- Список статей с пагинацией
+- Поиск по заголовку
+- Фильтрация по тегам
+- Сортировка: `date`, `rating`, `views`, `comments`
+- Страница статистики: общее число статей, топ тегов, топ авторов
+- Авторизация через Google
+- Избранные статьи для авторизованного пользователя
 
-## 🧰 Как запустить локально
+## Быстрый старт (локально)
 
-### 🧩 Бэкенд
-
-
-1. Создать виртуальное окружение и установить зависимости:
+### 1. Установка зависимостей Python
 
 ```bash
-poetry install 
+poetry install
 ```
 
-2. Запустить сервер:
+### 2. Настройка backend env
 
 ```bash
-poetry run uvicorn backend.main:app 
+copy backend\.env.example backend\.env
 ```
 
-👉 API будет доступен на: `http://localhost:8000`
+Заполните в `backend/.env`:
 
----
+```env
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+SECRET_KEY=...
+```
 
-### 🧩 Фронтенд
+### 3. Собрать базу статей (парсер)
 
-1. Перейти в папку frontend:
+```bash
+cd parser
+poetry run scrapy crawl habr
+cd ..
+```
+
+После этого будет создана/обновлена база `parser/habr_articles.db`.
+
+### 4. Запустить backend
+
+```bash
+poetry run uvicorn backend.main:app --reload
+```
+
+API будет доступно на `http://127.0.0.1:8000`.
+
+### 5. Запустить frontend
 
 ```bash
 cd frontend
-```
-
-2. Установить зависимости:
-
-```bash
 npm install
-```
-
-4. Запустить приложение:
-
-```bash
 npm run dev
 ```
 
-👉 Приложение откроется в браузере по адресу: `http://localhost:5173`
+Frontend будет доступен на `http://127.0.0.1:5173`.
 
----
+## API
 
-## 📦 Деплой на Render
+Базовые эндпоинты:
 
-### 🧠 Backend
+| Метод | Эндпоинт | Описание |
+|---|---|---|
+| `GET` | `/api/articles` | Список статей |
+| `GET` | `/api/articles/{article_id}` | Детали статьи |
+| `GET` | `/api/stats` | Агрегированная статистика |
+| `GET` | `/auth/google` | Старт Google OAuth |
+| `GET` | `/auth/callback` | OAuth callback |
+| `GET` | `/favorites` | Избранное пользователя (Bearer JWT) |
+| `POST` | `/favorites/{article_id}` | Добавить в избранное |
+| `DELETE` | `/favorites/{article_id}` | Удалить из избранного |
 
-1. Создайте **Web Service** на Render
-2. Репозиторий: `Rabbau/Habr-Article-Explorer`
-3. Ветка: `prod`
-4. Build Command:
+Параметры `GET /api/articles`:
 
-```bash
-pip install poetry && poetry install --only main --no-root
-```
+- `search` — поиск по заголовку
+- `tag` — фильтр по тегу
+- `sort` — `date | rating | views | comments`
+- `page` — страница (по умолчанию 1)
+- `limit` — размер страницы (1..100, по умолчанию 20)
 
-6. Start Command:
+Swagger: `http://127.0.0.1:8000/docs`
 
-```bash
-poetry run uvicorn backend.main:app --host 0.0.0.0 --port 10000
-```
+## Переменные окружения
 
----
+### Backend (`backend/.env`)
 
-### 🧠 Frontend
+| Переменная | Назначение |
+|---|---|
+| `GOOGLE_CLIENT_ID` | OAuth client id Google |
+| `GOOGLE_CLIENT_SECRET` | OAuth secret Google |
+| `SECRET_KEY` | Ключ подписи JWT |
 
-1. Создайте **Static Site** на Render
-2. Репозиторий: тот же
-3. Ветка: `prod`
-4. Build Command:
+### Frontend (`frontend/.env.production`)
 
-```bash
-npm install && npm run build
-```
+| Переменная | Назначение |
+|---|---|
+| `VITE_BACKEND_URL` | URL backend API для production |
 
-5. Publish Directory:
+## Деплой
 
-```
-dist
-```
+Текущая структура деплоя (Render):
 
-6. Добавьте ENV:
+- Frontend: Static Site
+- Backend: Web Service (FastAPI)
 
-```
-VITE_BACKEND_URL=https://<адрес вашего бэка на Render>
-```
+Для production убедитесь, что:
 
----
+- в frontend задан `VITE_BACKEND_URL`
+- в backend заданы `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SECRET_KEY`
+- OAuth callback URL совпадает с доменом backend (в текущем коде callback зашит в `backend/auth/router.py`)
 
-## 📡 API
+## Важно
 
-All endpoints are prefixed with `/api`.
-
-### 📝 Получить список статей
-
-```
-GET /api/articles
-```
-
-Query параметры:
-
-| Параметр | Описание                                   |
-| -------- | ------------------------------------------ |
-| search   | Поиск по заголовку                         |
-| tag      | Фильтрация по тегу                         |
-| sort     | Сортировка (date, rating, views, comments) |
-| page     | Номер страницы                             |
-| limit    | Количество на страницу                     |
-
----
-
-### 📦 Получить одну статью
-
-```
-GET /api/articles/{id}
-```
-
----
-
-### 📊 Статистика
-
-```
-GET /api/stats
-```
-
-Возвращает JSON с полями:
-
-| Поле           | Описание            |
-| -------------- | ------------------- |
-| total_articles | Общее кол-во статей |
-| top_tags       | Список топ‑20 тегов |
-| top_authors    | Топ авторов         |
-
----
-
-## 💡 Примеры запросов
-
-### Axios (React)
-
-```js
-axios.get(`${API_URL}/api/stats`)
-```
-
-### Curl
-
-```bash
-curl https://<backend-url>/api/articles
-```
-
----
-
-## 📦 Переменные окружения
-
-**frontend/.env**
-
-```
-VITE_BACKEND_URL=https://<backend-host>
-```
-
----
-
-## Deploy render. необходимо зайти на обе ссылки, чтобы запустить Render
-
-**front**
-https://habr-article-explorer-1.onrender.com/
-
-**backend (api)**
-https://habr-article-explorer.onrender.com/docs#/default/get_articles_api_articles_get
+- Парсер пишет в SQLite с дедупликацией по `link`.
+- Backend использует ту же базу `parser/habr_articles.db`.
+- Таблицы `users` и `favorites` создаются автоматически при старте FastAPI приложения.
