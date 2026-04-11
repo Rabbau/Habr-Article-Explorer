@@ -173,3 +173,12 @@ Swagger: `http://127.0.0.1:8000/docs`
 - Парсер пишет в SQLite с дедупликацией по `link`.
 - Backend использует ту же базу `parser/habr_articles.db`.
 - Таблицы `users` и `favorites` создаются автоматически при старте FastAPI приложения.
+
+
+## Ссылка на захостченый бесплатный рендер:
+
+сначала запустите backend:
+https://habr-article-explorer.onrender.com/
+
+затем frontend:
+https://habr-article-explorer-1.onrender.com/
