@@ -1,5 +1,6 @@
 from backend.database import get_connection
 
+
 def create_users_table():
     conn = get_connection()
     cursor = conn.cursor()

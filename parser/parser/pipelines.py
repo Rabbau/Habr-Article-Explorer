@@ -39,21 +39,24 @@ class SQLitePipeline:
         if link in self.existing_links:
             return item
 
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             INSERT INTO articles
             (title, author, date, tags, views, comments, rating, link, preview_text)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            item.get("title"),
-            item.get("author"),
-            item.get("date"),
-            ",".join(item.get("tags", [])),
-            item.get("views") or 0,
-            item.get("comments") or 0,
-            item.get("rating") or 0,
-            link,
-            item.get("preview_text")
-        ))
+        """,
+            (
+                item.get("title"),
+                item.get("author"),
+                item.get("date"),
+                ",".join(item.get("tags", [])),
+                item.get("views") or 0,
+                item.get("comments") or 0,
+                item.get("rating") or 0,
+                link,
+                item.get("preview_text"),
+            ),
+        )
 
         self.existing_links.add(link)
 

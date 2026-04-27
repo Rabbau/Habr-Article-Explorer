@@ -1,5 +1,6 @@
 import scrapy
 
+
 class HabrParserItem(scrapy.Item):
     title = scrapy.Field()
     author = scrapy.Field()

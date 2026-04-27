@@ -1,5 +1,6 @@
 from backend.database import get_connection
 
+
 def fetch_articles(search, tag, sort, page, limit):
     conn = get_connection()
     cursor = conn.cursor()
@@ -27,12 +28,15 @@ def fetch_articles(search, tag, sort, page, limit):
 
     offset = (page - 1) * limit
 
-    cursor.execute(f"""
+    cursor.execute(
+        f"""
         SELECT * FROM articles
         {where_sql}
         ORDER BY {order_sql}
         LIMIT ? OFFSET ?
-    """, params + [limit, offset])
+    """,
+        params + [limit, offset],
+    )
 
     rows = cursor.fetchall()
     conn.close()
@@ -45,14 +49,12 @@ def fetch_articles(search, tag, sort, page, limit):
 
     return articles
 
+
 def get_article_by_id(article_id: int):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT * FROM articles WHERE id = ?",
-        (article_id,)
-    )
+    cursor.execute("SELECT * FROM articles WHERE id = ?", (article_id,))
     row = cursor.fetchone()
     conn.close()
 
@@ -62,6 +64,7 @@ def get_article_by_id(article_id: int):
     article = dict(row)
     article["tags"] = article["tags"].split(",") if article["tags"] else []
     return article
+
 
 def get_stats_data():
     conn = get_connection()

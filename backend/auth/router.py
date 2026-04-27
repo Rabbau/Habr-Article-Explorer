@@ -11,9 +11,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 CLIENT_ID = GOOGLE_CLIENT_ID
 CLIENT_SECRET = GOOGLE_CLIENT_SECRET
-SECRET_KEY = SECRET_KEY 
+SECRET_KEY = SECRET_KEY
 REDIRECT_URI = "https://habr-article-explorer.onrender.com/auth/callback"
-FRONTEND_URL = "https://habr-article-explorer-1.onrender.com/"  
+FRONTEND_URL = "https://habr-article-explorer-1.onrender.com/"
 ALGORITHM = "HS256"
 
 
@@ -49,19 +49,17 @@ def google_callback(code: str):
             "client_secret": CLIENT_SECRET,
             "redirect_uri": REDIRECT_URI,
             "grant_type": "authorization_code",
-        }
+        },
     )
     access_token = token_response.json().get("access_token")
 
     user_info = httpx.get(
         "https://www.googleapis.com/oauth2/v2/userinfo",
-        headers={"Authorization": f"Bearer {access_token}"}
+        headers={"Authorization": f"Bearer {access_token}"},
     ).json()
 
     user = get_or_create_user(
-        email=user_info["email"],
-        name=user_info.get("name"),
-        google_id=user_info["id"]
+        email=user_info["email"], name=user_info.get("name"), google_id=user_info["id"]
     )
 
     token = create_jwt(dict(user))

@@ -8,6 +8,7 @@ router = APIRouter(
     tags=["articles"],
 )
 
+
 @router.get("/articles")
 def get_articles(
     search: str = Query(None, description="Поиск по заголовку"),

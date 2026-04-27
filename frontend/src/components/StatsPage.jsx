@@ -12,11 +12,6 @@ function StatsPage({ stats }) {
     <div className="stats-page">
       <div className="stats-grid">
 
-        {/* Карточка - всего статей */}
-        <div className="stat-card stat-card--highlight">
-          <div className="stat-card__number">{total_articles}</div>
-          <div className="stat-card__label">статей в базе</div>
-        </div>
 
         {/* Топ тегов - горизонтальный бар чарт */}
         <div className="stat-card stat-card--wide">
