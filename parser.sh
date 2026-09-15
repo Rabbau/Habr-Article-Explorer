@@ -5,7 +5,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$REPO_ROOT"
 
 if command -v poetry >/dev/null 2>&1; then
+  cd parser
   poetry run scrapy crawl habr -s LOG_LEVEL="${SCRAPY_LOG_LEVEL:-INFO}" -s CLOSESPIDER_PAGECOUNT="${PAGES:-30}"
+  cd ..
 elif [[ -f ".venv/bin/activate" ]]; then
   # Fallback for environments without Poetry in PATH.
   source ".venv/bin/activate"
