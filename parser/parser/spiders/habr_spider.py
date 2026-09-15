@@ -30,7 +30,7 @@ class HabrSpider(scrapy.Spider):
         },
     }
 
-    def start_requests(self):
+    async def start(self):
         conn = sqlite3.connect("habr_articles.db")
         try:
             self.existing_links = {
@@ -38,7 +38,8 @@ class HabrSpider(scrapy.Spider):
             }
         finally:
             conn.close()
-        yield from super().start_requests()
+        async for request in super().start():
+            yield request
 
     def parse(self, response):
         articles = response.css("article.tm-articles-list__item:not(.tm-voice-article)")
