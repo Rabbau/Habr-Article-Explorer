@@ -1,3 +1,5 @@
+import sqlite3
+
 import scrapy
 from parser.items import HabrParserItem
 
@@ -28,11 +30,23 @@ class HabrSpider(scrapy.Spider):
         },
     }
 
+    def start_requests(self):
+        conn = sqlite3.connect("habr_articles.db")
+        try:
+            self.existing_links = {
+                row[0] for row in conn.execute("SELECT link FROM articles")
+            }
+        finally:
+            conn.close()
+        yield from super().start_requests()
+
     def parse(self, response):
         articles = response.css("article.tm-articles-list__item:not(.tm-voice-article)")
         self.logger.info(
             f"[parse] Найдено article-блоков: {len(articles)} на {response.url}"
         )
+
+        found_new_link = False
 
         for article in articles:
             link = (
@@ -40,24 +54,36 @@ class HabrSpider(scrapy.Spider):
                 or article.css("h2 a::attr(href)").get()
             )
 
-            if link:
-                link = response.urljoin(link)
-                item = HabrParserItem()
-                item["link"] = link
-                item["author"] = (
-                    article.css(".tm-user-info__username::text").get(default="").strip()
-                )
-                # Теги берём здесь — они есть в статическом HTML карточки
-                item["tags"] = article.css(
-                    "a.tm-publication-hub__link span:first-child::text"
-                ).getall()
-                yield response.follow(
-                    link, callback=self.parse_full_article, meta={"item": item}
-                )
-            else:
+            if not link:
                 self.logger.warning(
                     f"[parse] Ссылка не найдена. HTML:\n{article.get()[:300]}"
                 )
+                continue
+
+            link = response.urljoin(link)
+
+            if link in self.existing_links:
+                continue
+
+            found_new_link = True
+            item = HabrParserItem()
+            item["link"] = link
+            item["author"] = (
+                article.css(".tm-user-info__username::text").get(default="").strip()
+            )
+            # Теги берём здесь — они есть в статическом HTML карточки
+            item["tags"] = article.css(
+                "a.tm-publication-hub__link span:first-child::text"
+            ).getall()
+            yield response.follow(
+                link, callback=self.parse_full_article, meta={"item": item}
+            )
+
+        if not found_new_link:
+            self.logger.info(
+                f"[parse] На {response.url} нет новых статей — останавливаем пагинацию."
+            )
+            return
 
         next_page = response.css("a[rel='next']::attr(href)").get()
         if next_page:
